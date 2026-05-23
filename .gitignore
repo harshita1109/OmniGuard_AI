@@ -1,0 +1,18 @@
+Standard python ignores plus venv, env files, caches, data, model artifacts:
+venv/
+*.pyc
+__pycache__/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+.env
+.env.local
+*.sqlite
+data/raw/*.jsonl
+ !data/raw/.gitkeep
+ *.pkl
+ .DS_Store
+ .vscode/
+ .idea/
