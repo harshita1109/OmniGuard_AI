@@ -1,0 +1,10 @@
+README.md
+pyproject.toml
+src/omniguard/__init__.py
+src/omniguard/detector.py
+src/omniguard/embedder.py
+src/omniguard.egg-info/PKG-INFO
+src/omniguard.egg-info/SOURCES.txt
+src/omniguard.egg-info/dependency_links.txt
+src/omniguard.egg-info/top_level.txt
+tests/test_detector.py
