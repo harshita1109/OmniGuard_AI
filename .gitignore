@@ -16,3 +16,4 @@ data/raw/*.jsonl
  .DS_Store
  .vscode/
  .idea/
+progress.md
