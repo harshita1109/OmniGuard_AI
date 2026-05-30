@@ -3,10 +3,13 @@ from __future__ import annotations
 import numpy as np
 from sentence_transformers import SentenceTransformer
 
-class Embedder:
-    """"Converts text into 384 dim vector using all-MiniLM-L6-v2.
 
-    The model is loaded lazily on first use so importing this module is cheap and tests that mock the embedder pay zero startup cost."""
+class Embedder:
+    """Converts text into 384-dim vectors using all-MiniLM-L6-v2.
+
+    The model is loaded lazily on first use so importing this module is cheap,
+    and tests that mock the embedder pay zero startup cost.
+    """
 
     def __init__(self, model_name: str = "all-MiniLM-L6-v2") -> None:
         self.model_name = model_name
@@ -18,8 +21,8 @@ class Embedder:
             self._model = SentenceTransformer(self.model_name)
         return self._model
 
-    def embed(self, text:str) -> np.ndarray:
-        """"Embed a single strinh. Returns shape(len(texts),384)."""
+    def embed(self, text: str) -> np.ndarray:
+        """Embed a single string. Returns shape (384,)."""
         model = self._load()
         return model.encode(text)
 
