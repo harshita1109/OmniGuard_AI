@@ -9,6 +9,7 @@ from omniguard.vector_store import VectorStore
 class Detector:
     """Anomaly detector that uses kNN search over a VectorStore.
 
+
     Score = mean distance to the top-k nearest baseline vectors.
     Higher score = farther from anything we've seen = more anomalous.
     """
