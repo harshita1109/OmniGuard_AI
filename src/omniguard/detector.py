@@ -3,35 +3,50 @@ from __future__ import annotations
 import numpy as np
 
 from omniguard.embedder import Embedder
-
-
-def _cosine(a: np.ndarray, b: np.ndarray) -> float:
-    """Cosine similarity between two vectors."""
-    dot = np.dot(a, b)
-    norm = np.linalg.norm(a) * np.linalg.norm(b)
-    return float(dot / norm)
+from omniguard.vector_store import VectorStore
 
 
 class Detector:
-    """Centroid-based anomaly detector."""
+    """Anomaly detector that uses kNN search over a VectorStore.
 
-    def __init__(self, embedder: Embedder, threshold: float = 0.35) -> None:
+
+    Score = mean distance to the top-k nearest baseline vectors.
+    Higher score = farther from anything we've seen = more anomalous.
+    """
+
+    def __init__(
+        self,
+        embedder: Embedder,
+        store: VectorStore | None = None,
+        threshold: float = 0.35,
+        k: int = 5,
+    ) -> None:
         self.embedder = embedder
+        self.store = store if store is not None else VectorStore(dim=384)
         self.threshold = threshold
-        self.baseline_vectors: np.ndarray | None = None
-        self.centroid: np.ndarray | None = None
+        self.k = k
 
     def add_baseline(self, texts: list[str]) -> None:
-        """Embed baseline texts, store them, and compute the centroid."""
+        """Embed baseline texts and add them to the vector store."""
         if not texts:
             raise ValueError("baseline must contain at least one text")
-        self.baseline_vectors = self.embedder.embed_batch(texts)
-        self.centroid = np.mean(self.baseline_vectors, axis=0)
+        vectors = self.embedder.embed_batch(texts)
+        metadatas = [{"text": t} for t in texts]
+        self.store.add_batch(vectors, metadatas)
 
     def check(self, text: str) -> dict:
-        """Score a new text. Returns {'is_anomaly': bool, 'score': float}."""
-        if self.centroid is None:
+        """Score a new text via kNN. Returns is_anomaly, score, neighbors."""
+        if len(self.store) == 0:
             raise RuntimeError("call add_baseline() before check()")
-        vec = self.embedder.embed(text)
-        score = 1.0 - _cosine(vec, self.centroid)
-        return {"is_anomaly": score > self.threshold, "score": score}
+
+        query = self.embedder.embed(text)
+        results = self.store.search(query, k=self.k)
+
+        score = float(np.mean([r["distance"] for r in results]))
+        neighbors = [r["metadata"]["text"] for r in results]
+
+        return {
+            "is_anomaly": score > self.threshold,
+            "score": score,
+            "neighbors": neighbors,
+        }
