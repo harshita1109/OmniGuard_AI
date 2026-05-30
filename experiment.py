@@ -1,5 +1,6 @@
-import numpy as np 
-from sentence_transformers import SentenceTransformer 
+import numpy as np
+from sentence_transformers import SentenceTransformer
+
 
 def cosine_similarity(a: np.ndarray, b: np.ndarray) -> float:
     """Cosine similarity between two vectors, computed by hand."""
@@ -17,7 +18,7 @@ def main() -> None:
         "The cat sat on the mat",
         "A feline rested on the rug",
         "Quantum chromodynamics is hard",
-      ]
+    ]
 
     # 3. Embed all three. Output shape: (3, 384).
     embeddings = model.encode(sentences)
@@ -26,9 +27,9 @@ def main() -> None:
     # 4. Compute cosine similarity for each pair, by hand.
     pairs = [
         ("cat-mat vs feline-rug", embeddings[0], embeddings[1]),
-        ("cat-mat vs quantum",    embeddings[0], embeddings[2]),
+        ("cat-mat vs quantum", embeddings[0], embeddings[2]),
         ("feline-rug vs quantum", embeddings[1], embeddings[2]),
-      ]
+    ]
 
     for label, a, b in pairs:
         score = cosine_similarity(a, b)

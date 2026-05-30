@@ -6,7 +6,6 @@ import pytest
 from omniguard.detector import Detector
 from omniguard.embedder import Embedder
 
-
 BASELINE = [
     "Paris is the capital of France.",
     "Water boils at 100 degrees Celsius.",
